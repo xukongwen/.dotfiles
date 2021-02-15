@@ -12,9 +12,10 @@ call plug#begin('~/.vim/plugged')
 	Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 	Plug 'junegunn/fzf.vim'
 	Plug 'yuttie/comfortable-motion.vim'
-	Plug 'vimwiki/vimwiki'
+"	Plug 'vimwiki/vimwiki'
 	Plug 'francoiscabrol/ranger.vim'
 	Plug 'yianwillis/vimcdoc'
+	Plug 'nightsense/carbonized'
 call plug#end()
 
 "=====================居中goyo插件设置==============
@@ -41,7 +42,11 @@ autocmd! VimEnter * :Goyo
 autocmd! User GoyoEnter call <SID>goyo_enter()
 autocmd! User GoyoLeave call <SID>goyo_leave()
 
+
 "============基础设置=============================
+"set cursorline 
+autocmd InsertEnter * set showmode
+autocmd InsertLeave * set noshowmode
 
 let g:ranger_map_keys = 0
 let g:NERDTreeHijackNetrw = 0
@@ -61,6 +66,28 @@ set background=dark
 "set number
 colorscheme gruvbox
 let g:auto_save = 1
+
+"Mode Settings
+
+"let &t_SR.="\e[4 q" "SR = REPLACE mode
+"let &t_EI.="\e[1 q" "EI = NORMAL mode (ELSE)
+
+
+""Cursor settings:
+
+"  1 -> blinking block
+"  "  2 -> solid block
+"  "  3 -> blinking underscore
+"  "  4 -> solid underscore
+"  "  5 -> blinking vertical bar
+"  "  6 -> solid vertical bar 
+"
+"
+"
+"  "let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+"  "let &t_SR = "\<Esc>]50;CursorShape=2\x7"
+"  "let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+
 "=====================Leader Map=======================
 " leader设置为是空格键
 let mapleader = " "
@@ -77,8 +104,16 @@ noremap <leader>q :qa<cr>
 noremap <leader>r :Ranger<cr>
 " 空格b，进入buffer
 noremap <leader>b :Buffer<cr>
-
+" 空格h，进入帮助
 noremap <leader>h :e ~/none-os/none-os-help.md<cr>
+" 空格t，打开一个新tab
+noremap <leader>t :tabe<CR>
+" 空格v，分屏
+noremap <leader>v :vnew<CR>
+" 空格e，打開文件瀏覽
+noremap <leader>e :E<cr>
+" 空格n，新建文檔
+noremap <leader>n :edit<cr>
 
 "======================按键映射========================================
 
@@ -112,7 +147,7 @@ let g:startify_custom_header =
 
 " 自定义页尾
 let g:startify_custom_footer =
-           \ ['', "   Nono-OS 超早期测试版0.004b", '']
+           \ ['', "   Nono-OS 超早期测试版0.004c", '']
 
 " 自定义开头画面
 
