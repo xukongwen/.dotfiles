@@ -133,7 +133,3 @@ export TERM=fbterm
 export VISUAL=vim
 export EDITOR="$VISUAL"
 
-#emacs -nw
-vim
-
-

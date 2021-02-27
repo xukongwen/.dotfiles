@@ -45,8 +45,15 @@ autocmd! User GoyoLeave call <SID>goyo_leave()
 
 "============基础设置=============================
 "set cursorline 
-autocmd InsertEnter * set showmode
-autocmd InsertLeave * set noshowmode
+" 几乎无论是插入还是不同模式，都使文本居中，可根据自己喜好开关
+" 同时退出插入模式时自动保存
+autocmd VimEnter * set scrolloff=999
+autocmd InsertEnter * set showmode | set scrolloff=1 | norm! zz
+autocmd InsertLeave * set noshowmode | set scrolloff=999 | :w
+
+" 再次进入Vim直接打开上次退出时的文档,离开的时候未来写自动同步，git和坚果云
+"autocmd VimLeave * :mksession! ~/.last.vim
+"autocmd VimEnter * :so ~/.last.vim
 
 let g:ranger_map_keys = 0
 let g:NERDTreeHijackNetrw = 0
@@ -56,7 +63,8 @@ set nocompatible
 filetype plugin on
 syntax on
 set encoding=UTF-8
-set autoread
+set autoread "文件被外部修改后，自动重新读取
+set autowrite "自动保存
 set t_Co=256
 set noswapfile 
 set noshowmode
@@ -66,28 +74,6 @@ set background=dark
 "set number
 colorscheme gruvbox
 let g:auto_save = 1
-
-"Mode Settings
-
-"let &t_SR.="\e[4 q" "SR = REPLACE mode
-"let &t_EI.="\e[1 q" "EI = NORMAL mode (ELSE)
-
-
-""Cursor settings:
-
-"  1 -> blinking block
-"  "  2 -> solid block
-"  "  3 -> blinking underscore
-"  "  4 -> solid underscore
-"  "  5 -> blinking vertical bar
-"  "  6 -> solid vertical bar 
-"
-"
-"
-"  "let &t_SI = "\<Esc>]50;CursorShape=1\x7"
-"  "let &t_SR = "\<Esc>]50;CursorShape=2\x7"
-"  "let &t_EI = "\<Esc>]50;CursorShape=0\x7"
-
 "=====================Leader Map=======================
 " leader设置为是空格键
 let mapleader = " "
@@ -123,8 +109,10 @@ noremap <leader>n :edit<cr>
 " 为了中文写作模式将j k改为实际行的上下操作
 nnoremap k gk
 nnoremap gk k
-nnoremap j g
+nnoremap j gj
 nnoremap gj j
+" 全选
+map <silent> <C-A> gg v G
 " 将退出模式由ESC改为连按两次\
 inoremap \\ <ESC>
 
