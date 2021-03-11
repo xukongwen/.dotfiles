@@ -16,6 +16,9 @@ call plug#begin('~/.vim/plugged')
 	Plug 'francoiscabrol/ranger.vim'
 	Plug 'yianwillis/vimcdoc'
 	Plug 'nightsense/carbonized'
+	Plug 'lilydjwg/fcitx.vim'
+	Plug 'ptzz/lf.vim'
+	Plug 'voldikss/vim-floaterm'
 call plug#end()
 
 "=====================居中goyo插件设置==============
@@ -59,6 +62,7 @@ let g:ranger_map_keys = 0
 let g:NERDTreeHijackNetrw = 0
 let g:ranger_replace_netrw = 1
 
+set autowriteall
 set nocompatible
 filetype plugin on
 syntax on
@@ -101,6 +105,9 @@ noremap <leader>e :E<cr>
 " 空格n，新建文檔
 noremap <leader>n :edit<cr>
 
+" 用ctrl+c來將內容拷貝到系統粘貼版，但是需要有xclip這個東西
+map <C-c> :!xclip -f -sel clip<CR>
+map <C-v> :-1r !xclip -o -sel clip<CR>
 "======================按键映射========================================
 
 "map <C-n> :NERDTree<CR>
@@ -197,6 +204,6 @@ let g:startify_lists = [
           \ ]
 
 " 自定义书签
-let g:startify_bookmarks = [ {'g': '~/write/novel/greentunnel.md'}, ]
+let g:startify_bookmarks = [ {'g': '~/kongwen/write/novel/greentunnel.md'}, ]
 
-
+"autocmd VimLeave * !daode.sh
