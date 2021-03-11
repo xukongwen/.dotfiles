@@ -96,16 +96,15 @@ alias ..='cd ..'
 alias update='sudo apt update && sudo apt upgrade'
 # 打开bashrc
 alias zz='vim ~/.zshrc'
-alias note='vim ~/kongwen/write/notes/note.md'
-alias s='vim ~/kongwen/write/book/all-notes.md'
-alias todo='vim ~/kongwen/write/notes/todo.md'
-alias day='vim ~/kongwen/write/notes/day.md'
+alias note='vim ~/k/write/notes/note.md'
+alias s='vim ~/k/write/book/all-notes.md'
+alias todo='vim ~/k/write/notes/todo.md'
+alias day='vim ~/k/write/notes/day.md'
 alias la='ls -A'
 alias l='ls -CF'
 alias v='vim'
+alias re='sudo reboot'
 alias reborn='source ~/.zshrc'
-# 挂载坚果云
-alias jianguo='sudo mount.davfs https://dav.jianguoyun.com/dav/backup /mnt/dav'
 # git
 alias add='git add .'
 alias commit='git commit -m "hi"'
@@ -148,4 +147,9 @@ lolban none-os
 [[ -s /home/k/.autojump/etc/profile.d/autojump.sh ]] && source /home/k/.autojump/etc/profile.d/autojump.sh
 
 autoload -U compinit && compinit -u
+
+# juypter-lab
+export PATH="$PATH:/home/k/.local/bin"
+# qutebroswer
+export QT_XCB_GL_INTEGRATION=none
 
