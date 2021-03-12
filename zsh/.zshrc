@@ -99,6 +99,7 @@ alias zz='vim ~/.zshrc'
 alias note='vim ~/k/write/notes/note.md'
 alias s='vim ~/k/write/book/all-notes.md'
 alias todo='vim ~/k/write/notes/todo.md'
+alias wday='vim ~/k/write/notes/work-log.md'
 alias day='vim ~/k/write/notes/day.md'
 alias la='ls -A'
 alias l='ls -CF'
@@ -133,6 +134,13 @@ cha(){
 an(){
 	sudo apt install $1
 }
+
+ziti(){
+	sudo cp $1 /usr/share/fonts/truetype
+	sudo fc-cache -v -f
+}
+
+
 
 source ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # 默认editor
