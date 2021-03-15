@@ -14,3 +14,7 @@ pip install qtile
 # install .deb
 
 sudo dpkg -i
+
+# install font
+
+fc-cache -f -v
