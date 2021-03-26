@@ -7,12 +7,12 @@
 
 (menu-bar-mode -1)            ; Disable the menu bar
 
-;; Set up the visible bell 
+;; Set up the visible bell
 ;;(setq visible-bell t)
 ;; Setting English Font
 ;;(set-face-attribute 'default nil :font "Ubuntu Mono 29")
 
-;; 測試中文 
+;; 測試中文
 ;;(dolist (charset '(kana han symbol cjk-misc bopomofo))
 ;;    (set-fontset-font (frame-parameter nil 'font)
 ;;		                          charset (font-spec :family "Songti"
@@ -52,9 +52,13 @@
 
 (setq default-input-method "rime"
       rime-show-candidate 'posframe)
-(setq
-  rime-inline-predicates '(rime-predicate-space-after-cc-p
-                           rime-predicate-current-uppercase-letter-p))
+;; 自動且切換中英文
+
+
+(setq rime-disable-predicates
+      '(rime-predicate-evil-mode-p
+        rime-predicate-after-alphabet-char-p
+        rime-predicate-prog-in-code-p))
 
 ;; 自動存檔
 (add-to-list 'load-path "~/git/auto-save/") ; add auto-save to your load-path
@@ -84,12 +88,13 @@
 (use-package command-log-mode)
 
 (use-package writeroom-mode)
+(setq writeroom-mode 1)
 
 (use-package ivy
 	       :diminish
 	         :bind (("C-s" . swiper)
 			         :map ivy-minibuffer-map
-				          ("TAB" . ivy-alt-done)	
+				          ("TAB" . ivy-alt-done)
 					           ("C-l" . ivy-alt-done)
 						            ("C-j" . ivy-next-line)
 							             ("C-k" . ivy-previous-line)
