@@ -1,10 +1,3 @@
-
-;; Added by Package.el.  This must come before configurations of
-;; installed packages.  Don't delete this line.  If you don't want it,
-;; just comment it out by adding a semicolon to the start of the line.
-;; You may delete these explanatory comments.
-(package-initialize)
-
 (setq inhibit-startup-message t)
 
 (scroll-bar-mode -1)        ; Disable visible scrollbar
@@ -14,49 +7,204 @@
 
 (menu-bar-mode -1)            ; Disable the menu bar
 
-;; Set up the visible bell
-(setq visible-bell t)
-
+;; Set up the visible bell 
+;;(setq visible-bell t)
 ;; Setting English Font
-(set-face-attribute 'default nil :font "DejaVu Sans Mono 19")
+;;(set-face-attribute 'default nil :font "Ubuntu Mono 29")
 
-;; 測試中文
-(dolist (charset '(kana han symbol cjk-misc bopomofo))
-  (set-fontset-font (frame-parameter nil 'font)
-                    charset (font-spec :family "KKong3"
-                                       :size 29)))
+;; 測試中文 
+;;(dolist (charset '(kana han symbol cjk-misc bopomofo))
+;;    (set-fontset-font (frame-parameter nil 'font)
+;;		                          charset (font-spec :family "Songti"
+;;							                                            :size 39)))
+;;(if (display-graphic-p)
+;;  (dolist (charset ‘(kana han symbol cjk-misc bopomofo))
+;;    (set-fontset-font (frame-parameter nil ‘font)
+;;		      charset
+;;		      (font-spec :family "KKong3"
+;;				 :size 39))))
 
-;;(set-face-attribute 'default nil :font "KKong3" :height 180)
+(setq graphic-only-plugins-setting nil)
+(setq make-backup-files nil)
 
-(load-theme 'wombat)
+;; 将字体配置加入容器
+(push '(progn (set-face-attribute 'default nil :font "KKong3 29")) graphic-only-plugins-setting)
+
+;; 当GUI Emacs打开时加载容器中的代码
+(add-hook 'after-make-frame-functions #'(lambda (frame)
+					                                            (dolist (code graphic-only-plugins-setting)
+										      (eval code))))
+
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
+;; (load-theme 'zenburn)
 
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
-(require 'package)
+;;RIME設置
+(require 'rime)
 
-(setq package-archives '(("gnu"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")
-                                                    ("melpa" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/"))) 
+(setq rime-posframe-properties
+      (list :background-color "#333333"
+            :foreground-color "#dcdccc"
+            :font "KKong3-24"
+            :internal-border-width 10))
+
+(setq default-input-method "rime"
+      rime-show-candidate 'posframe)
+(setq
+  rime-inline-predicates '(rime-predicate-space-after-cc-p
+                           rime-predicate-current-uppercase-letter-p))
+
+;; 自動存檔
+(add-to-list 'load-path "~/git/auto-save/") ; add auto-save to your load-path
+(require 'auto-save)
+(auto-save-enable)
+
+(setq auto-save-silent t)   ; quietly save
+(setq auto-save-delete-trailing-whitespace t)  ; automatically delete spaces at the end of the line when saving
+
+;; Initialize package sources
+(require 'package)
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+			                          ("org" . "https://orgmode.org/elpa/")
+						                           ("elpa" . "https://elpa.gnu.org/packages/")))
 
 (package-initialize)
 (unless package-archive-contents
-  (package-refress-contents))
+   (package-refresh-contents))
 
+;; Initialize use-package on non-Linux platforms
 (unless (package-installed-p 'use-package)
-  (package-install 'use-package))
+     (package-install 'use-package))
 
 (require 'use-package)
 (setq use-package-always-ensure t)
 
-(use-package rime
+(use-package command-log-mode)
+
+(use-package writeroom-mode)
+
+(use-package ivy
+	       :diminish
+	         :bind (("C-s" . swiper)
+			         :map ivy-minibuffer-map
+				          ("TAB" . ivy-alt-done)	
+					           ("C-l" . ivy-alt-done)
+						            ("C-j" . ivy-next-line)
+							             ("C-k" . ivy-previous-line)
+								              :map ivy-switch-buffer-map
+									               ("C-k" . ivy-previous-line)
+										                ("C-l" . ivy-done)
+												         ("C-d" . ivy-switch-buffer-kill)
+													          :map ivy-reverse-i-search-map
+														           ("C-k" . ivy-previous-line)
+															            ("C-d" . ivy-reverse-i-search-kill))
+		   :config
+		     (ivy-mode 1))
+
+(use-package doom-modeline
+	       :ensure t
+	       :init (doom-modeline-mode 1)
+	       :custom ((doom-modeline-height 15)))
+
+
+(defun efs/org-mode-setup ()
+  (org-indent-mode)
+  (variable-pitch-mode 1)
+  (visual-line-mode 1))
+
+;; Org Mode Configuration ------------------------------------------------------
+
+(defun efs/org-font-setup ()
+  ;; Replace list hyphen with dot
+  (font-lock-add-keywords 'org-mode
+                          '(("^ *\\([-]\\) "
+                             (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+
+  ;; Set faces for heading levels
+  (dolist (face '((org-level-1 . 1.4)
+                  (org-level-2 . 1.2)
+                  (org-level-3 . 1.05)
+                  (org-level-4 . 1.0)
+                  (org-level-5 . 1.1)
+                  (org-level-6 . 1.1)
+                  (org-level-7 . 1.1)
+                  (org-level-8 . 1.1)))
+    (set-face-attribute (car face) nil :font "Cantarell" :weight 'regular :height (cdr face)))
+
+  ;; Ensure that anything that should be fixed-pitch in Org files appears that way
+  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
+
+(use-package org
+  :hook (org-mode . efs/org-mode-setup)
+  :config
+  (setq org-ellipsis " ▾")
+  (efs/org-font-setup))
+
+(use-package org-bullets
+  :after org
+  :hook (org-mode . org-bullets-mode)
   :custom
-  (default-input-method "rime"))
+  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+
+(defun efs/org-mode-visual-fill ()
+  (setq visual-fill-column-width 100
+        visual-fill-column-center-text t)
+  (visual-fill-column-mode 1))
+
+(use-package visual-fill-column
+  :hook (org-mode . efs/org-mode-visual-fill))
+
+
+
+(require 'evil)
+(evil-mode 1)
+
+(setq latex-run-command "xelatex")
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages (quote (rime use-package xwidgete xwidgets-reuse))))
+ '(company-quickhelp-color-background "#4F4F4F")
+ '(company-quickhelp-color-foreground "#DCDCCC")
+ '(custom-enabled-themes '(gruvbox-dark-soft))
+ '(custom-safe-themes
+   '("4eb6fa2ee436e943b168a0cd8eab11afc0752aebb5d974bba2b2ddc8910fca8f" "83e0376b5df8d6a3fbdfffb9fb0e8cf41a11799d9471293a810deb7586c131e6" "e6df46d5085fde0ad56a46ef69ebb388193080cc9819e2d6024c9c6e27388ba9" default))
+ '(fci-rule-color "#383838")
+ '(nrepl-message-colors
+   '("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3"))
+ '(package-selected-packages
+   '(rime pdf-tools evil gruvbox-theme zenburn-theme helm doom-modeline ivy command-log-mode use-package))
+ '(vc-annotate-background "#2B2B2B")
+ '(vc-annotate-color-map
+   '((20 . "#BC8383")
+     (40 . "#CC9393")
+     (60 . "#DFAF8F")
+     (80 . "#D0BF8F")
+     (100 . "#E0CF9F")
+     (120 . "#F0DFAF")
+     (140 . "#5F7F5F")
+     (160 . "#7F9F7F")
+     (180 . "#8FB28F")
+     (200 . "#9FC59F")
+     (220 . "#AFD8AF")
+     (240 . "#BFEBBF")
+     (260 . "#93E0E3")
+     (280 . "#6CA0A3")
+     (300 . "#7CB8BB")
+     (320 . "#8CD0D3")
+     (340 . "#94BFF3")
+     (360 . "#DC8CC3")))
+ '(vc-annotate-very-old-color "#DC8CC3"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
