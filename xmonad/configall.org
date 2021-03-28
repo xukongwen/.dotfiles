@@ -1,3 +1,8 @@
+#+title: Xmonad Config
+#+PROPERTY: header-args :tangle xmonad.hs
+* Xmonad Config
+* Imports
+#+BEGIN_SRC haskell
 import XMonad
 import XMonad.Layout.Fullscreen
     ( fullscreenEventHook, fullscreenManageHook, fullscreenSupport, fullscreenFull )
@@ -21,7 +26,11 @@ import XMonad.Layout.Gaps
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
 import Data.Maybe (maybeToList)
+#+END_SRC
 
+* Mystuff
+
+#+BEGIN_SRC haskell
 myTerminal      = "alacritty"
 
 -- Whether focus follows the mouse pointer.
@@ -74,6 +83,12 @@ addEWMHFullscreen   = do
     wms <- getAtom "_NET_WM_STATE"
     wfs <- getAtom "_NET_WM_STATE_FULLSCREEN"
     mapM_ addNETSupported [wms, wfs]
+#+END_SRC
+------------------------------------------------------------------------
+-- Key bindings. Add, modify or remove key bindings here.
+--
+* Keymap
+#+BEGIN_SRC haskell
 
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
@@ -231,6 +246,11 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 
     -- you may also bind events to the mouse scroll wheel (button4 and button5)
     ]
+#+END_SRC
+
+* layouts
+
+#+BEGIN_SRC haskell
 
 myLayout = avoidStruts(tiled ||| Mirror tiled ||| Full)
   where
@@ -268,7 +288,27 @@ myManageHook = fullscreenManageHook <+> manageDocks <+> composeAll
     , resource  =? "kdesktop"       --> doIgnore
     , isFullscreen --> doFullFloat
                                  ]
+#+END_SRC
+* Xmonad Start
+------------------------------------------------------------------------
+-- Event handling
 
+-- * EwmhDesktops users should change this to ewmhDesktopsEventHook
+--
+-- Defines a custom handler function for X Events. The function should
+-- return (All True) if the default handler is to be run afterwards. To
+-- combine event hooks use mappend or mconcat from Data.Monoid.
+--
+myEventHook = mempty
+
+
+------------------------------------------------------------------------
+-- Status bars and logging
+
+-- Perform an arbitrary action on each internal state change or X event.
+-- See the 'XMonad.Hooks.DynamicLog' extension for examples.
+--
+#+BEGIN_SRC haskell
 myEventHook = mempty
 
 myLogHook = return ()
@@ -327,3 +367,4 @@ defaults = def {
         logHook            = myLogHook,
         startupHook        = myStartupHook >> addEWMHFullscreen
     }
+#+END_SRC

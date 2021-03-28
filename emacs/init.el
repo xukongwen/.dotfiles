@@ -23,7 +23,13 @@
 ;;		      charset
 ;;		      (font-spec :family "KKong3"
 ;;				 :size 39))))
+;;   快捷鍵設置
+;;   org 的captrue 模式的快捷鍵
+(define-key global-map "\C-cc" 'org-capture)
 
+
+;;   org 的某種輸出文字格式
+(setq org-export-coding-system 'utf-8)
 (setq graphic-only-plugins-setting nil)
 (setq make-backup-files nil)
 
