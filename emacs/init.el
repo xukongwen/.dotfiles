@@ -32,9 +32,10 @@
 (setq org-export-coding-system 'utf-8)
 (setq graphic-only-plugins-setting nil)
 (setq make-backup-files nil)
-
+(set-default 'truncate-lines t)
+(set-display-table-slot standard-display-table 'wrap ?\ )
 ;; 将字体配置加入容器
-(push '(progn (set-face-attribute 'default nil :font "KKong3 29")) graphic-only-plugins-setting)
+(push '(progn (set-face-attribute 'default nil :font "KKong3 19")) graphic-only-plugins-setting)
 
 ;; 当GUI Emacs打开时加载容器中的代码
 (add-hook 'after-make-frame-functions #'(lambda (frame)
@@ -158,7 +159,7 @@
   :config
   (setq org-ellipsis " ▾")
   (efs/org-font-setup))
-
+(require 'org-tempo)
 (use-package org-bullets
   :after org
   :hook (org-mode . org-bullets-mode)
