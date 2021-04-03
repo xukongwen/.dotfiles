@@ -289,9 +289,10 @@ myStartupHook = do
   spawnOnce "feh --bg-scale ~/wallpapers/yosemite-lowpoly.jpg"
   spawnOnce "greenclip daemon"
   spawnOnce "dunst"
-  spawnOnce "picom -f"
+  spawnOnce "picom"
+--spawnOnce "picom -f"
   spawnOnce "emacs --daemon"
-  spawnOnce "fcitx"
+  spawnOnce "fcitx5"
 ------------------------------------------------------------------------
 --Now run xmonad with all the defaults we set up.
 

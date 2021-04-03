@@ -1,3 +1,7 @@
+#+title: Emacs Config
+#+PROPERTY: header-args :tangle init.el
+* Emacs config
+* Emacs 菜單隱藏之類的
 (setq inhibit-startup-message t)
 
 (scroll-bar-mode -1)        ; Disable visible scrollbar
@@ -6,11 +10,10 @@
 (set-fringe-mode 10)        ; Give some breathing room
 
 (menu-bar-mode -1)            ; Disable the menu bar
-;; neotree
-(setq neo-theme (if (display-graphic-p) 'icons 'arrow))
-(global-set-key [f8] 'neotree-toggle)
+
 ;; Set up the visible bell
 ;;(setq visible-bell t)
+* 其他版本用的字體設置
 ;; Setting English Font
 ;;(set-face-attribute 'default nil :font "Ubuntu Mono 29")
 
@@ -32,10 +35,12 @@
 
 ;;   org 的某種輸出文字格式
 (setq org-export-coding-system 'utf-8)
+* 某些初級設置
 (setq graphic-only-plugins-setting nil)
 (setq make-backup-files nil)
 (set-default 'truncate-lines t)
 (set-display-table-slot standard-display-table 'wrap ?\ )
+* 字體設置
 ;; 将字体配置加入容器
 (push '(progn (set-face-attribute 'default nil :font "KKong3 19")) graphic-only-plugins-setting)
 
@@ -45,14 +50,11 @@
 										      (eval code))))
 
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-;;(load-theme 'gruvbox)
+;; (load-theme 'zenburn)
 
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-;; projectile
-(projectile-mode +1)
-;;(define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
-(define-key projectile-mode-map (kbd "C-c p") 'projectile--find-file)
+* 輸入法設置
 ;;RIME設置
 (require 'rime)
 
@@ -71,20 +73,19 @@
       '(rime-predicate-evil-mode-p
         rime-predicate-after-alphabet-char-p
         rime-predicate-prog-in-code-p))
-
-;; 自動存檔
+* 自動存檔
 (add-to-list 'load-path "~/git/auto-save/") ; add auto-save to your load-path
 (require 'auto-save)
 (auto-save-enable)
 
 (setq auto-save-silent t)   ; quietly save
 (setq auto-save-delete-trailing-whitespace t)  ; automatically delete spaces at the end of the line when saving
-
+* 包管理
 ;; Initialize package sources
 (require 'package)
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-			 ("org" . "https://orgmode.org/elpa/")
-			 ("elpa" . "https://elpa.gnu.org/packages/")))
+			                          ("org" . "https://orgmode.org/elpa/")
+						                           ("elpa" . "https://elpa.gnu.org/packages/")))
 
 (package-initialize)
 (unless package-archive-contents
@@ -98,26 +99,35 @@
 (setq use-package-always-ensure t)
 
 (use-package command-log-mode)
-
+* 禪寫作模式
 (use-package writeroom-mode)
-(global-writeroom-mode)
+(global-writeroom-mode) 
 (setq writeroom-mode 1)
-
-(use-package awesome-tab
-	       :load-path "/home/k/.emacs.d/elpa/tab/"
-	       :config
-		   (awesome-tab-mode t))
+* ivy
 (use-package ivy
 	       :diminish
+	       :bind (("C-s" . swiper)
+	       :map ivy-minibuffer-m
+             ("TAB" . ivy-alt-done)
+	       ("C-l" . ivy-alt-done)
+	       ("C-j" . ivy-next-line)
+	       ("C-k" . ivy-previous-line)
+	       :map ivy-switch-buffer-map
+	       ("C-k" . ivy-previous-line)
+	       ("C-l" . ivy-done)
+	       ("C-d" . ivy-switch-buffer-kill)
+	       :map ivy-reverse-i-search-map
+	       ("C-k" . ivy-previous-line)
+	       ("C-d" . ivy-reverse-i-search-kill))
 	       :config
-		     (ivy-mode 1))
-
+	       (ivy-mode 1))
+* Doom-modeline
 (use-package doom-modeline
 	       :ensure t
 	       :init (doom-modeline-mode 1)
 	       :custom ((doom-modeline-height 15)))
 
-
+* org mode
 (defun efs/org-mode-setup ()
   (org-indent-mode)
   (variable-pitch-mode 1)
@@ -140,7 +150,7 @@
                   (org-level-6 . 1.1)
                   (org-level-7 . 1.1)
                   (org-level-8 . 1.1)))
-    (set-face-attribute (car face) nil :font "KKong3" :weight 'regular :height (cdr face)))
+    (set-face-attribute (car face) nil :font "Cantarell" :weight 'regular :height (cdr face)))
 
   ;; Ensure that anything that should be fixed-pitch in Org files appears that way
   (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
@@ -161,7 +171,7 @@
   :after org
   :hook (org-mode . org-bullets-mode)
   :custom
-  (org-bullets-bullet-list '("●" "○" "●" "○" "●" "○" "●")))
+  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 
 (defun efs/org-mode-visual-fill ()
   (setq visual-fill-column-width 100
@@ -169,53 +179,13 @@
   (visual-fill-column-mode 1))
 
 (use-package visual-fill-column
-  :hook (org-mode . efs/org-mode-visual-fill))
-
-;;(setq org-hide-emphasis-markers t)
-;;(use-package org-appear)
-;;(add-hook 'org-mode-hook 'org-appear-mode)
-;;(setq org-appear-autolinks t)
-
-
+  :hook (org-mode . efs/org-mode-visual-fill)
+* Evil
 (require 'evil)
 (evil-mode 1)
 
 (setq latex-run-command "xelatex")
-;; dashboard
-(use-package dashboard
-  :ensure t
-  :config
-  (dashboard-setup-startup-hook))
-
-(setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
-
-; Set the title
-;;(setq dashboard-init-info "This is an init message!")
-(setq dashboard-banner-logo-title "None-Note")
-(setq dashboard-set-heading-icons t)
-(setq dashboard-set-file-icons t)
-;; Set the banner
-(setq dashboard-startup-banner "/home/k/Pictures/logo1.png")
-;; Content is not centered by default. To center, set
-(setq dashboard-center-content t)
-;; To disable shortcut "jump" indicators for each section, set
-(setq dashboard-show-shortcuts nil)
-
-(setq dashboard-items '((recents  . 5)
-                        (bookmarks . 5)))
-(setq dashboard-set-init-info nil)
-
-(setq dashboard-set-footer nil)
-(setq dashboard-footer-icon (all-the-icons-octicon "dashboard"
-                                                   :height 1.1
-                                                   :v-adjust -0.05
-                                                   :face 'font-lock-keyword-face))
-
-
-(add-hook 'dashboard-mode-hook '(lambda () (setq mode-line-format nil)))
-(add-hook 'dashboard-mode-hook '(lambda () (setq mode-line-format nil)
-                                           (doom-modeline-mode -1)))
-;===================================
+* 其他什麼鬼
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -230,7 +200,7 @@
  '(nrepl-message-colors
    '("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3"))
  '(package-selected-packages
-   '(neotree projectile dashboard org-appear rime pdf-tools evil gruvbox-theme zenburn-theme helm doom-modeline ivy command-log-mode use-package))
+   '(rime pdf-tools evil gruvbox-theme zenburn-theme helm doom-modeline ivy command-log-mode use-package))
  '(vc-annotate-background "#2B2B2B")
  '(vc-annotate-color-map
    '((20 . "#BC8383")
