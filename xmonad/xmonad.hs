@@ -80,7 +80,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- 開啓一個終端：S+Enter
     [ ((modm, 		    xK_Return), spawn $ XMonad.terminal conf)
 
-    -- 打開emacs
+    -- 打開Emacs
     , ((modm,               xK_e    ), spawn "emacsclient -c -a emacs")
 
 
@@ -98,7 +98,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm .|. shiftMask, xK_s     ), spawn "exec ~/bin/ewwclose")
 
         -- 截屏: S+p
-     , ((modm,               xK_p     ), spawn "scrot '%Y-%m-%d_$wx$h.png' -e 'mv $f ~/Pictures/cap/'")
+     , ((modm,               xK_p     ), spawn "scrot '%Y-%m-%d-%H-%M-%s_$wx$h.png' -e 'mv $f ~/Pictures/cap/'")
 
 
 
