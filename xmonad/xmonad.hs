@@ -77,44 +77,39 @@ addEWMHFullscreen   = do
 
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
-    -- launch a terminal
+    -- 開啓一個終端：S+Enter
     [ ((modm, 		    xK_Return), spawn $ XMonad.terminal conf)
+
+    -- 打開emacs
+    , ((modm,               xK_e    ), spawn "emacsclient -c -a emacs")
+
 
     -- lock screen
     , ((modm,               xK_F1    ), spawn "betterlockscreen -l")
 
-    -- launch rofi and dashboard
+    -- 打開 rofi S+O
     , ((modm,               xK_o     ), spawn "~/bin/launcher.sh")
-    , ((modm,               xK_p     ), spawn "~/bin/centerlaunch")
-    , ((modm .|. shiftMask, xK_p     ), spawn "exec ~/bin/ewwclose")
+   -- 打開dashboard
+   --, ((modm,               xK_p     ), spawn "~/bin/centerlaunch")
+   -- , ((modm .|. shiftMask, xK_p     ), spawn "exec ~/bin/ewwclose")
 
-    -- launch eww sidebar
+    -- 打開 eww sider bar
     , ((modm,               xK_s     ), spawn "~/bin/sidebarlaunch")
     , ((modm .|. shiftMask, xK_s     ), spawn "exec ~/bin/ewwclose")
 
-    -- Audio keys
-    , ((0,                    xF86XK_AudioPlay), spawn "playerctl play-pause")
-    , ((0,                    xF86XK_AudioPrev), spawn "playerctl previous")
-    , ((0,                    xF86XK_AudioNext), spawn "playerctl next")
-    , ((0,                    xF86XK_AudioRaiseVolume), spawn "pactl set-sink-volume 0 +5%")
-    , ((0,                    xF86XK_AudioLowerVolume), spawn "pactl set-sink-volume 0 -5%")
-    , ((0,                    xF86XK_AudioMute), spawn "pactl set-sink-mute 0 toggle")
+        -- 截屏: S+p
+     , ((modm,               xK_p     ), spawn "scrot '%Y-%m-%d_$wx$h.png' -e 'mv $f ~/Pictures/cap/'")
 
-    -- Brightness keys
-    , ((0,                    xF86XK_MonBrightnessUp), spawn "brightnessctl s +10%")
-    , ((0,                    xF86XK_MonBrightnessDown), spawn "brightnessctl s 10-%")
 
-    -- Screenshot
-    , ((0,                    xK_Print), spawn "~/bin/maimcopy")
-    , ((modm,                 xK_Print), spawn "~/bin/maimsave")
 
     -- My Stuff
     , ((modm,               xK_b     ), spawn "exec ~/bin/bartoggle")
+    -- 休眠模式
     , ((modm,               xK_z     ), spawn "exec ~/bin/inhibit_activate")
     , ((modm .|. shiftMask, xK_z     ), spawn "exec ~/bin/inhibit_deactivate")
     , ((modm .|. shiftMask, xK_a     ), spawn "exec ~/bin/clipboardy")
 
-    -- close focused window
+    -- 關閉當前窗口
     , ((modm, xK_q     ), kill)
 
     -- GAPS!!!
@@ -142,19 +137,13 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- Resize viewed windows to the correct size
     , ((modm,               xK_n     ), refresh)
 
-    -- Move focus to the next window
+    -- 移動焦點到下一個窗口
     , ((modm,               xK_Tab   ), windows W.focusDown)
 
-    -- Move focus to the next window
-    , ((modm,               xK_j     ), windows W.focusDown)
-
-    -- Move focus to the previous window
-    , ((modm,               xK_k     ), windows W.focusUp  )
-
-    -- Move focus to the master window
+        -- Move focus to the master window
     , ((modm,               xK_m     ), windows W.focusMaster  )
 
-    -- Swap the focused window and the master window
+    -- 將選中窗口編程主窗口（向右移動）
     , ((modm .|. shiftMask, xK_Return), windows W.swapMaster)
 
     -- Swap the focused window with the next window
@@ -181,15 +170,11 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- Toggle the status bar gap
     -- Use this binding with avoidStruts from Hooks.ManageDocks.
     -- See also the statusBar function from Hooks.DynamicLog.
-    --
+    -- 打開上下狀態欄
     -- , ((modm              , xK_b     ), sendMessage ToggleStruts)
 
     -- Quit xmonad
     , ((modm .|. shiftMask, xK_q     ), spawn "~/bin/powermenu.sh")
-
-    -- Restart xmonad
-    , ((modm .|. shiftMask, xK_r     ), spawn "xmonad --recompile; xmonad --restart")
-
     -- Run xmessage with a summary of the default keybindings (useful for beginners)
     --, ((modm .|. shiftMask, xK_slash ), spawn ("echo \"" ++ help ++ "\" | xmessage -file -"))
     ]
@@ -202,16 +187,15 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     [((m .|. modm, k), windows $ f i)
         | (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9]
         , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]]
-    ++
+   -- ++
 
     --
     -- mod-{w,e,r}, Switch to physical/Xinerama screens 1, 2, or 3
     -- mod-shift-{w,e,r}, Move client to screen 1, 2, or 3
     --
-    [((m .|. modm, key), screenWorkspace sc >>= flip whenJust (windows . f))
-        | (key, sc) <- zip [xK_w, xK_e, xK_r] [0..]
-        , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
-
+    -- [((m .|. modm, key), screenWorkspace sc >>= flip whenJust (windows . f))
+    --    | (key, sc) <- zip [xK_w, xK_e, xK_r] [0..]
+    --    , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
 
 ------------------------------------------------------------------------
 -- Mouse bindings: default actions bound to mouse events

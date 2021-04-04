@@ -9,6 +9,9 @@
 ;; neotree
 (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
 (global-set-key [f8] 'neotree-toggle)
+(global-set-key [f9] 'dashboard-refresh-buffer)
+
+
 ;; Set up the visible bell
 ;;(setq visible-bell t)
 ;; Setting English Font
@@ -170,7 +173,10 @@
 
 (use-package visual-fill-column
   :hook (org-mode . efs/org-mode-visual-fill))
-
+;; org 裏面打開鏈接直接用回車
+(setq org-return-follows-link t)
+;; org 打開鏈接直接是本頁
+(add-to-list 'org-link-frame-setup '(file . find-file))
 ;;(setq org-hide-emphasis-markers t)
 ;;(use-package org-appear)
 ;;(add-hook 'org-mode-hook 'org-appear-mode)
