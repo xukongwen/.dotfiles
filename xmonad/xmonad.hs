@@ -83,6 +83,9 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- 打開Emacs
     , ((modm,               xK_e    ), spawn "emacsclient -c -a emacs")
 
+    -- 打開Firefox
+    , ((modm,               xK_f    ), spawn "firefox")
+
 
     -- lock screen
     , ((modm,               xK_F1    ), spawn "betterlockscreen -l")
@@ -269,11 +272,11 @@ myStartupHook = do
   spawnOnce "exec ~/bin/bartoggle"
   spawnOnce "exec ~/bin/eww daemon"
   spawn "xsetroot -cursor_name left_ptr"
-  spawn "exec ~/bin/lock.sh"
+ --spawn "exec ~/bin/lock.sh"
   spawnOnce "feh --bg-scale ~/wallpapers/yosemite-lowpoly.jpg"
   spawnOnce "greenclip daemon"
   spawnOnce "dunst"
-  spawnOnce "picom"
+ --spawnOnce "picom"
 --spawnOnce "picom -f"
   spawnOnce "emacs --daemon"
   spawnOnce "fcitx5"
