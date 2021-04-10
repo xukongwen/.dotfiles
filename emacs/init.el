@@ -59,6 +59,8 @@
 ;;RIME設置
 (require 'rime)
 
+(setq rime-user-data-dir "~/data/rime")
+
 (setq rime-posframe-properties
       (list :background-color "#333333"
             :foreground-color "#dcdccc"

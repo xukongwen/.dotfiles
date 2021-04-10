@@ -269,13 +269,13 @@ myLogHook = return ()
 --
 -- By default, do nothing.
 myStartupHook = do
-  spawnOnce "exec ~/bin/bartoggle"
-  spawnOnce "exec ~/bin/eww daemon"
+ -- spawnOnce "exec ~/bin/bartoggle"
+ -- spawnOnce "exec ~/bin/eww daemon"
   spawn "xsetroot -cursor_name left_ptr"
  --spawn "exec ~/bin/lock.sh"
   spawnOnce "feh --bg-scale ~/wallpapers/yosemite-lowpoly.jpg"
-  spawnOnce "greenclip daemon"
-  spawnOnce "dunst"
+  --spawnOnce "greenclip daemon"
+  --spawnOnce "dunst"
  --spawnOnce "picom"
 --spawnOnce "picom -f"
   spawnOnce "emacs --daemon"
