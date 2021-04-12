@@ -11,13 +11,18 @@ from libqtile.lazy import lazy
 from typing import List  # noqa: F401
 
 mod = "mod4"                                     # Sets mod key to SUPER/WINDOWS
-myTerm = "alacritty"                             # My terminal of choice
+myTerm = "termite"                             # My terminal of choice
 
 keys = [
          ### The essentials
          Key([mod], "Return",
              lazy.spawn(myTerm),
              desc='Launches My Terminal'
+             ),
+         # Open Emacs
+         Key([mod], "e",
+             lazy.spawn("emacsclient -c -a emacs"),
+             desc='Launches Emacs'
              ),
          Key([mod, "shift"], "Return",
              lazy.spawn("dmenu_run -p 'Run: '"),
@@ -36,6 +41,12 @@ keys = [
              lazy.restart(),
              desc='Restart Qtile'
              ),
+         # Hide topbar
+        Key([mod], "z",
+             lazy.hide_show_bar("top"),
+             desc='Hide bar'
+             ),
+
          Key([mod, "shift"], "q",
              lazy.shutdown(),
              desc='Shutdown Qtile'
@@ -96,80 +107,8 @@ keys = [
          Key([mod, "control"], "Return",
              lazy.layout.toggle_split(),
              desc='Toggle between split and unsplit sides of stack'
-             ),
+             )
 
-                  # Emacs programs launched using the key chord CTRL+e followed by 'key'
-         KeyChord(["control"],"e", [
-             Key([], "e",
-                 lazy.spawn("emacsclient -c -a 'emacs'"),
-                 desc='Launch Emacs'
-                 ),
-             Key([], "b",
-                 lazy.spawn("emacsclient -c -a 'emacs' --eval '(ibuffer)'"),
-                 desc='Launch ibuffer inside Emacs'
-                 ),
-             Key([], "d",
-                 lazy.spawn("emacsclient -c -a 'emacs' --eval '(dired nil)'"),
-                 desc='Launch dired inside Emacs'
-                 ),
-             Key([], "i",
-                 lazy.spawn("emacsclient -c -a 'emacs' --eval '(erc)'"),
-                 desc='Launch erc inside Emacs'
-                 ),
-             Key([], "m",
-                 lazy.spawn("emacsclient -c -a 'emacs' --eval '(mu4e)'"),
-                 desc='Launch mu4e inside Emacs'
-                 ),
-             Key([], "n",
-                 lazy.spawn("emacsclient -c -a 'emacs' --eval '(elfeed)'"),
-                 desc='Launch elfeed inside Emacs'
-                 ),
-             Key([], "s",
-                 lazy.spawn("emacsclient -c -a 'emacs' --eval '(eshell)'"),
-                 desc='Launch the eshell inside Emacs'
-                 ),
-             Key([], "v",
-                 lazy.spawn("emacsclient -c -a 'emacs' --eval '(+vterm/here nil)'"),
-                 desc='Launch vterm inside Emacs'
-                 )
-         ]),
-
-
-                # Dmenu scripts launched using the key chord SUPER+p followed by 'key'
-         KeyChord([mod], "p", [
-             Key([], "e",
-                 lazy.spawn("./dmscripts/dmconf"),
-                 desc='Choose a config file to edit'
-                 ),
-             Key([], "i",
-                 lazy.spawn("./dmscripts/dmscrot"),
-                 desc='Take screenshots via dmenu'
-                 ),
-             Key([], "k",
-                 lazy.spawn("./dmscripts/dmkill"),
-                 desc='Kill processes via dmenu'
-                 ),
-             Key([], "l",
-                 lazy.spawn("./dmscripts/dmlogout"),
-                 desc='A logout menu'
-                 ),
-             Key([], "m",
-                 lazy.spawn("./dmscripts/dman"),
-                 desc='Search manpages in dmenu'
-                 ),
-             Key([], "r",
-                 lazy.spawn("./dmscripts/dmred"),
-                 desc='Search reddit via dmenu'
-                 ),
-             Key([], "s",
-                 lazy.spawn("./dmscripts/dmsearch"),
-                 desc='Search various search engines via dmenu'
-                 ),
-             Key([], "p",
-                 lazy.spawn("passmenu"),
-                 desc='Retrieve passwords with dmenu'
-                 )
-         ])
 ]
 
 group_names = [("1", {'layout': 'monadtall'}),
@@ -189,21 +128,14 @@ for i, (name, kwargs) in enumerate(group_names, 1):
     keys.append(Key([mod, "shift"], str(i), lazy.window.togroup(name))) # Send current window to another group
 
 layout_theme = {"border_width": 2,
-                "margin": 8,
+                # Gaps
+                "margin": 18,
                 "border_focus": "e1acff",
                 "border_normal": "1D2330"
                 }
 
 layouts = [
-    #layout.MonadWide(**layout_theme),
-    #layout.Bsp(**layout_theme),
-    #layout.Stack(stacks=2, **layout_theme),
-    #layout.Columns(**layout_theme),
-    #layout.RatioTile(**layout_theme),
-    #layout.VerticalTile(**layout_theme),
-    #layout.Matrix(**layout_theme),
-    #layout.Zoomy(**layout_theme),
-    layout.MonadTall(**layout_theme),
+   layout.MonadTall(**layout_theme),
     layout.Max(**layout_theme),
     layout.Tile(shift_windows=True, **layout_theme),
     layout.Stack(num_stacks=2),
@@ -409,6 +341,30 @@ focus_on_window_activation = "smart"
 def start_once():
     home = os.path.expanduser('~')
     subprocess.call([home + '/.config/qtile/autostart.sh'])
+
+
+def main(qtile):
+    # Show/Hide bar based on layout
+    def _bar(qtile):
+        # Get the bar
+        bar = qtile.current_screen.bottom
+        # Check the layout and hide bar accordingly
+        if(qtile.current_layout.info()['name'] == 'max'):
+            bar.show(False)
+        else:
+            bar.show(True)
+
+    @hook.subscribe.layout_change
+    def layout_change(layout,group):
+        _bar(qtile)
+
+    @hook.subscribe.changegroup
+    def group_change():
+        _bar(qtile)
+
+    @hook.subscribe.client_focus
+    def focus_change(window):
+        _bar(qtile)
 
 # XXX: Gasp! We're lying here. In fact, nobody really uses or cares about this
 # string besides java UI toolkits; you can see several discussions on the

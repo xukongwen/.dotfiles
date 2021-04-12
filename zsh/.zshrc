@@ -84,6 +84,9 @@ fe() {
 	IFS=$'\n' files=($(find ~ -not -path '*/\.*' -a \( -type d -o -type f \) | fzf --query="$1" --multi --select-1 --exit-0))
 	[[ -n "$files" ]] && ${EDITOR:-vim} "${files[@]}"
 }
+# run emacs as clint
+alias e='emacsclient --create-frame --alternate-editor="" >/dev/null 2>&1'
+alias note='e ~/k/write/notes/note.org'
 
 # 一些自定义快捷命令
 alias n='grep' 
@@ -93,27 +96,35 @@ alias ll='ls -lah'
 alias xx='clear'
 alias ..='cd ..'
 # 升级
-alias update='sudo apt update && sudo apt upgrade'
 # 打开bashrc
 alias zz='vim ~/.zshrc'
-alias note='vim ~/k/write/notes/note.md'
+# writeing
 alias s='vim ~/k/write/book/all-notes.md'
 alias todo='vim ~/k/write/notes/todo.md'
 alias wday='vim ~/k/write/notes/work-log.md'
 alias day='vim ~/k/write/notes/day.md'
+alias tunnel='e ~/k/write/novel/greentunnel.org'
 alias la='ls -A'
 alias l='ls -CF'
 alias v='vim'
-alias re='sudo reboot'
+#alias re='sudo reboot'
 alias reborn='source ~/.zshrc'
+alias xc='xmonad --recompile'
+alias xr='xmonad --restart'
 # git
 alias add='git add .'
 alias commit='git commit -m "hi"'
 alias push='git push'
 alias pull='git pull'
+alias gitemail='git config --global user.email "oabdao@gmail.com"'
+alias gitname='git config --global user.name "xukongwen"'
 # fzf 多选
 alias f='fzf -m --bind ctrl-a:select-all,ctrl-d:deselect-all'
 # 一些自写功能
+re() {
+ffmpeg -video_size 1920x1080 -framerate 30 -f x11grab -i :0.0 -c:v libx264 -qp 0 -preset ultrafast ~/video/capture/"$1".mkv
+}
+
 ml() {
    n -rc $1 * | sort -r -n -t ':' -k 2
 }
@@ -132,7 +143,7 @@ cha(){
 }
 
 an(){
-	sudo apt install $1
+	sudo pacman -S $1
 }
 
 ziti(){
@@ -140,12 +151,22 @@ ziti(){
 	sudo fc-cache -v -f
 }
 
+update(){
+	sudo pacman -Syy
+	sudo pacman -Syu
+}
+
+count-word() {
+	file=$1; shift
+	for word in $@; do				     echo "${word} $(grep -c $word $file)"
+							 done
+	    }
 
 
 source ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # 默认editor
-export VISUAL=vim
-export EDITOR="$VISUAL"
+#export VISUAL=vim
+#export EDITOR="$VISUAL"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export FZF_DEFAULT_OPS="--extended"
@@ -157,7 +178,11 @@ lolban none-os
 autoload -U compinit && compinit -u
 
 # juypter-lab
-export PATH="$PATH:/home/k/.local/bin"
+export PATH="/home/k/.local/bin:/home/k/bin:$PATH"
+#export PATH="$PATH:/home/k/bin"
 # qutebroswer
 export QT_XCB_GL_INTEGRATION=none
 
+export ALTERNATE_EDITOR=""
+export EDITOR="emacsclient -t"                  # $EDITOR opens in terminal
+export VISUAL="emacsclient -c -a emacs"         # $VISUAL opens in GUI mode
