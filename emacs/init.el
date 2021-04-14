@@ -17,17 +17,17 @@
 ;; Setting English Font
 ;;(set-face-attribute 'default nil :font "Ubuntu Mono 29")
 
-;; 測試中文
+;;測試中文
 ;;(dolist (charset '(kana han symbol cjk-misc bopomofo))
-;;    (set-fontset-font (frame-parameter nil 'font)
-;;		                          charset (font-spec :family "Songti"
-;;							                                            :size 39)))
+ ;;  (set-fontset-font (frame-parameter nil 'font)
+;;		     charset (font-spec :family "KKong3"
+							                          ;;              :size 29)))
 ;;(if (display-graphic-p)
-;;  (dolist (charset ‘(kana han symbol cjk-misc bopomofo))
-;;    (set-fontset-font (frame-parameter nil ‘font)
+ ;; (dolist (charset '(kana han symbol cjk-misc bopomofo))
+  ;;  (set-fontset-font (frame-parameter nil 'font)
 ;;		      charset
 ;;		      (font-spec :family "KKong3"
-;;				 :size 39))))
+;;				 :size 29))))
 ;;   快捷鍵設置
 ;;   org 的captrue 模式的快捷鍵
 (define-key global-map "\C-cc" 'org-capture)
@@ -40,8 +40,9 @@
 (set-default 'truncate-lines t)
 (set-display-table-slot standard-display-table 'wrap ?\ )
 ;; 将字体配置加入容器
-(push '(progn (set-face-attribute 'default nil :font "KKong3 19")) graphic-only-plugins-setting)
-
+(push '(progn (set-face-attribute 'default nil :font "KKong3 22")) graphic-only-plugins-setting)
+;; 新实验字体
+(setq default-frame-alist '((font . "KKong3-15")))
 ;; 当GUI Emacs打开时加载容器中的代码
 (add-hook 'after-make-frame-functions #'(lambda (frame)
 					                                            (dolist (code graphic-only-plugins-setting)
@@ -64,12 +65,12 @@
 (setq rime-posframe-properties
       (list :background-color "#333333"
             :foreground-color "#dcdccc"
-            :font "KKong3-24"
-            :internal-border-width 10))
+            :font "KKong3-22"
+            :internal-border-width 5))
 
 (setq default-input-method "rime"
       rime-show-candidate 'posframe)
-;; 自動且切換中英文
+;; 自動切換中英文
 
 
 (setq rime-disable-predicates
@@ -140,7 +141,7 @@
   (dolist (face '((org-level-1 . 1.4)
                   (org-level-2 . 1.2)
                   (org-level-3 . 1.05)
-                  (org-level-4 . 1.0)
+                  (org-level-4 . 2.0)
                   (org-level-5 . 1.1)
                   (org-level-6 . 1.1)
                   (org-level-7 . 1.1)

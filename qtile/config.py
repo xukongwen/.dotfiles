@@ -24,6 +24,10 @@ keys = [
              lazy.spawn("emacsclient -c -a emacs"),
              desc='Launches Emacs'
              ),
+         Key([mod], "a",
+             lazy.spawn("firefox"),
+             desc='Launches Firefox'
+             ),
          Key([mod, "shift"], "Return",
              lazy.spawn("dmenu_run -p 'Run: '"),
              # lazy.spawn("rofi -show drun -config ~/.config/rofi/themes/dt-dmenu.rasi -display-drun \"Run: \" -drun-display-format \"{name}\""),
