@@ -1,6 +1,62 @@
+#+TITLE: Qtile Config
+#+PROPERTY: header-args :tangle config.py
+
+* Table of Contents :toc:
+- [[#about-this-config][About This Config]]
+- [[#features-of-qtile][Features of Qtile]]
+- [[#imports][Imports]]
+- [[#variables][Variables]]
+- [[#keybindings][Keybindings]]
+- [[#groups][Groups]]
+- [[#settings-for-some-layouts][Settings For Some Layouts]]
+- [[#layouts][Layouts]]
+- [[#colors][Colors]]
+- [[#prompt][Prompt]]
+- [[#default-widget-settings][Default Widget Settings]]
+- [[#widgets][Widgets]]
+- [[#screens][Screens]]
+- [[#some-important-functions][Some Important Functions]]
+- [[#drag-floating-windows][Drag floating windows]]
+- [[#floating-windows][Floating windows]]
+- [[#startup-applications][Startup applications]]
+
+* About This Config
+#+CAPTION: Qtile Scrot
+#+ATTR_HTML: :alt Qtile Scrot :title Qtile Scrot :align left
+[[https://gitlab.com/dwt1/dotfiles/-/raw/master/.screenshots/dotfiles07-thumb.png]]
+
+The following comments are the copyright and licensing information from the default
+qtile config. Copyright (c) 2010 Aldo Cortesi, 2010, 2014 dequis, 2012 Randall Ma,
+2012-2014 Tycho Andersen, 2012 Craig Barnes, 2013 horsik, 2013 Tao Sauvage
+
+Modified by Derek Taylor
+- My YouTube: [[http://www.youtube.com/c/DistroTube][http://www.youtube.com/c/DistroTube]]
+- My GitLab:  [[http://www.gitlab.com/dwt1/][http://www.gitlab.com/dwt1/]]
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this
+software and associated documentation files (the "Software"), to deal in the Software
+without restriction, including without limitation the rights to use, copy, modify,
+merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be included in all copies
+or substantial portions of the Software.
+
+* Features of Qtile
+- Simple, small and extensible. It's easy to write your own layouts, widgets and commands.
+- Configured in Python.
+- Command shell that allows all aspects of Qtile to be managed and inspected.
+- Complete remote scriptability - write scripts to set up workspaces, manipulate windows, update status bar widgets and more.
+- Qtile's remote scriptability makes it one of the most thoroughly unit-tested window managers around.
+
+* Imports
+These are python modules that must be imported for this config.
+
+#+BEGIN_SRC python
 # -*- coding: utf-8 -*-
 import os
-``````import re
+import re
 import socket
 import subprocess
 from libqtile import qtile
@@ -9,14 +65,46 @@ from libqtile.command import lazy
 from libqtile import layout, bar, widget, hook
 from libqtile.lazy import lazy
 from typing import List  # noqa: F401
+#+END_SRC
 
+* Variables
+Just some variables I am setting to make my life easier.
+
+#+BEGIN_SRC python
 mod = "mod4"                                     # Sets mod key to SUPER/WINDOWS
-myTerm = "termite"                             # My terminal of choice
+myTerm = "alacritty"                             # My terminal of choice
+#+END_SRC
 
+* Keybindings
+These are the keybindings for qtile.
+
+| A FEW IMPORTANT KEYBINDINGS | ASSOCIATED ACTION                                                        |
+|-----------------------------+--------------------------------------------------------------------------|
+| MODKEY + RETURN             | opens terminal (alacritty is the terminal but can be easily changed)     |
+| MODKEY + SHIFT + RETURN     | opens run launcher (dmenu is the run launcher but can be easily changed) |
+| MODKEY + TAB                | rotates through the available layouts                                    |
+| MODKEY + SHIFT + c          | closes window with focus                                                 |
+| MODKEY + SHIFT + r          | restarts qtile                                                           |
+| MODKEY + SHIFT + q          | quits qtile                                                              |
+| MODKEY + 1-9                | switch focus to workspace (1-9)                                          |
+| MODKEY + SHIFT + 1-9        | send focused window to workspace (1-9)                                   |
+| MODKEY + j                  | lazy layout down (switches focus between windows in the stack)           |
+| MODKEY + k                  | lazy layout up (switches focus between windows in the stack)             |
+| MODKEY + SHIFT + j          | lazy layout shuffle_down (rotates the windows in the stack)              |
+| MODKEY + SHIFT + k          | lazy layout shuffle_up (rotates the windows in the stack)                |
+| MODKEY + h                  | shrink size of window (MondadTall layout)                                |
+| MODKEY + l                  | expand size of window (MondadTall layout)                                |
+| MODKEY + w                  | switch focus to monitor 1                                                |
+| MODKEY + e                  | switch focus to monitor 2                                                |
+| MODKEY + r                  | switch focus to monitor 3                                                |
+| MODKEY + period             | switch focus to next monitor                                             |
+| MODKEY + comma              | switch focus to prev monitor                                             |
+
+#+BEGIN_SRC python
 keys = [
          ### The essentials
          Key([mod], "Return",
-             lazy.spawn(myTerm),
+             lazy.spawn(myTerm+" -e fish"),
              desc='Launches My Terminal'
              ),
          Key([mod, "shift"], "Return",
@@ -209,7 +297,12 @@ keys = [
                  )
          ])
 ]
+#+END_SRC
 
+* Groups
+Groups are really workspaces.
+
+#+BEGIN_SRC python
 group_names = [("WWW", {'layout': 'monadtall'}),
                ("DEV", {'layout': 'monadtall'}),
                ("SYS", {'layout': 'monadtall'}),
@@ -225,13 +318,23 @@ groups = [Group(name, **kwargs) for name, kwargs in group_names]
 for i, (name, kwargs) in enumerate(group_names, 1):
     keys.append(Key([mod], str(i), lazy.group[name].toscreen()))        # Switch to another group
     keys.append(Key([mod, "shift"], str(i), lazy.window.togroup(name))) # Send current window to another group
+#+END_SRC
 
+* Settings For Some Layouts
+Settings that I use in most layouts, so I'm defining them one time here.
+
+#+BEGIN_SRC python
 layout_theme = {"border_width": 2,
                 "margin": 8,
                 "border_focus": "e1acff",
                 "border_normal": "1D2330"
                 }
+#+END_SRC
 
+* Layouts
+The layouts that I use, plus several that I don't use. Uncomment the layouts you want; comment out the ones that you don't want to use.
+
+#+BEGIN_SRC python
 layouts = [
     #layout.MonadWide(**layout_theme),
     #layout.Bsp(**layout_theme),
@@ -268,7 +371,12 @@ layouts = [
          ),
     layout.Floating(**layout_theme)
 ]
+#+END_SRC
 
+* Colors
+Defining some colors for use in our panel.  Colors have two values because you can use gradients.
+
+#+BEGIN_SRC python
 colors = [["#282c34", "#282c34"], # panel background
           ["#3d3f4b", "#434758"], # background for current screen tab
           ["#ffffff", "#ffffff"], # font color for group names
@@ -277,9 +385,19 @@ colors = [["#282c34", "#282c34"], # panel background
           ["#4f76c7", "#4f76c7"], # color for the 'even widgets'
           ["#e1acff", "#e1acff"], # window name
           ["#ecbbfb", "#ecbbfb"]] # backbround for inactive screens
+#+END_SRC
 
+* Prompt
+Settings for the qtile run prompt, even though I don't actually use this. I prefer to use dmenu instead.
+
+#+BEGIN_SRC python
 prompt = "{0}@{1}: ".format(os.environ["USER"], socket.gethostname())
+#+END_SRC
 
+* Default Widget Settings
+Defining a few default widget key values.
+
+#+BEGIN_SRC python
 ##### DEFAULT WIDGET SETTINGS #####
 widget_defaults = dict(
     font="Ubuntu Mono",
@@ -288,7 +406,12 @@ widget_defaults = dict(
     background=colors[2]
 )
 extension_defaults = widget_defaults.copy()
+#+END_SRC
 
+* Widgets
+This is the bar, or the panel, and the widgets within the bar.
+
+#+BEGIN_SRC python
 def init_widgets_list():
     widgets_list = [
               widget.Sep(
@@ -500,14 +623,14 @@ def init_widgets_list():
                        background = colors[5],
                        format = "%A, %B %d - %H:%M "
                        ),
-              widget.Wlan(
-                       background = colors[4],
-                       foreground = colors[5],
-
-                      ),
               ]
     return widgets_list
+#+END_SRC
 
+* Screens
+Screen settings for my triple monitor setup.
+
+#+BEGIN_SRC python
 def init_widgets_screen1():
     widgets_screen1 = init_widgets_list()
     del widgets_screen1[7:8]               # Slicing removes unwanted widgets (systray) on Monitors 1,3
@@ -527,7 +650,11 @@ if __name__ in ["config", "__main__"]:
     widgets_list = init_widgets_list()
     widgets_screen1 = init_widgets_screen1()
     widgets_screen2 = init_widgets_screen2()
+#+END_SRC
 
+* Some Important Functions
+
+#+begin_src python
 def window_to_prev_group(qtile):
     if qtile.currentWindow is not None:
         i = qtile.groups.index(qtile.currentGroup)
@@ -554,7 +681,12 @@ def switch_screens(qtile):
     i = qtile.screens.index(qtile.current_screen)
     group = qtile.screens[i - 1].group
     qtile.current_screen.set_group(group)
+#+end_src
 
+* Drag floating windows
+Defining some mousebindings for use with floating windows.
+
+#+BEGIN_SRC python
 mouse = [
     Drag([mod], "Button1", lazy.window.set_position_floating(),
          start=lazy.window.get_position()),
@@ -569,12 +701,17 @@ main = None
 follow_mouse_focus = True
 bring_front_click = False
 cursor_warp = False
+#+END_SRC
 
+* Floating windows
+Defining what class of windows should always be floating.
+
+#+BEGIN_SRC python
 floating_layout = layout.Floating(float_rules=[
     # Run the utility of `xprop` to see the wm class and name of an X client.
     # default_float_rules include: utility, notification, toolbar, splash, dialog,
     # file_progress, confirm, download and error.
-    *layout.Floating.default_float_rules,
+    ,*layout.Floating.default_float_rules,
     Match(title='Confirmation'),      # tastyworks exit box
     Match(title='Qalculate!'),        # qalculate-gtk
     Match(wm_class='kdenlive'),       # kdenlive
@@ -582,7 +719,12 @@ floating_layout = layout.Floating(float_rules=[
 ])
 auto_fullscreen = True
 focus_on_window_activation = "smart"
+#+END_SRC
 
+* Startup applications
+The applications that should autostart every time qtile is started.
+
+#+BEGIN_SRC python
 @hook.subscribe.startup_once
 def start_once():
     home = os.path.expanduser('~')
@@ -597,3 +739,4 @@ def start_once():
 # We choose LG3D to maximize irony: it is a 3D non-reparenting WM written in
 # java that happens to be on java's whitelist.
 wmname = "LG3D"
+#+END_SRC
