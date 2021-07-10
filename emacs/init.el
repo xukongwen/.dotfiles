@@ -15,18 +15,16 @@
 
 (setq graphic-only-plugins-setting nil)
 
-;; 实验字体
-
-;;(set-default-font “KKong3-9”)
+;;字体
 
 (setq default-frame-alist '((font . "KKong3-15")))
+;;先安裝字體，這個是谷歌的，免費開源的最完美字體
+(set-fontset-font t 'han "Source Han Serif SC Regular")
+;;其他漢字語系的字體
+(set-fontset-font t 'kana "Noto Sans CJK JP Regular")
+(set-fontset-font t 'hangul "Noto Sans CJK KR Regular")
+(set-fontset-font t 'cjk-misc "Noto Sans CJK KR Regular")
 
-;; 将字体配置加入容器
-;;(push '(progn (set-face-attribute 'default nil :font "KKong3 15")) graphic-only-plugins-setting)
-;; 当GUI Emacs打开时加载容器中的代码
-;;(add-hook 'after-make-frame-functions #'(lambda (frame)
-					                                          ;;  (dolist (code graphic-only-plugins-setting)
-										    ;;  (eval code))))
 
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
 
@@ -81,12 +79,29 @@
 (global-writeroom-mode)
 (setq writeroom-mode 1)
 
+;;安裝jk單行設置
+(use-package evil-better-visual-line
+  :ensure t
+  :config
+  (evil-better-visual-line-on))
+
 ;; 安裝awesome-tab
 ;; https://github.com/manateelazycat/awesome-tab.git
 (use-package awesome-tab
 	       :load-path "~/git/awesome-tab/"
 	       :config
 		   (awesome-tab-mode t))
+;; 在dashboard去掉多餘的tab
+(defun awesome-tab-hide-tab (x)
+  (let ((name (format "%s" x)))
+    (or
+     (string-prefix-p "*scratch" name)
+     (string-prefix-p "*Messages" name)
+     (string-prefix-p "*Compile-Log*" name)
+     (string-prefix-p "*lsp" name)
+     (and (string-prefix-p "magit" name)
+               (not (file-name-extension name)))
+     )))
 ;;安裝ivy
 (use-package ivy
 			 	 :diminish
