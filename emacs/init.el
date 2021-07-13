@@ -19,7 +19,8 @@
 
 (setq default-frame-alist '((font . "KKong3-15")))
 ;;先安裝字體，這個是谷歌的，免費開源的最完美字體
-(set-fontset-font t 'han "Source Han Serif SC Regular")
+(set-fontset-font t 'han "KKong3")
+;;(set-fontset-font t 'han "Source Han Serif SC Regular")
 ;;其他漢字語系的字體
 (set-fontset-font t 'kana "Noto Sans CJK JP Regular")
 (set-fontset-font t 'hangul "Noto Sans CJK KR Regular")
@@ -113,7 +114,7 @@
 			 	 :init (doom-modeline-mode 1)
 			 	 :custom ((doom-modeline-height 15)))
 
-;; orgmode 的一切設置========================================================================
+;; orgmode 的一切設置
 
 (defun efs/org-mode-setup ()
   (org-indent-mode)
@@ -175,12 +176,28 @@
 ;;(add-hook 'org-mode-hook 'org-appear-mode)
 ;;(setq org-appear-autolinks t)
 
+;; org-roam设置
+(use-package org-roam
+      :ensure t
+      :hook
+      (after-init . org-roam-mode)
+      :custom
+      (org-roam-directory (file-truename "~/write/org-roam/"))
+      :bind (:map org-roam-mode-map
+              (("C-c n l" . org-roam)
+               ("C-c n f" . org-roam-find-file)
+               ("C-c n g" . org-roam-graph))
+              :map org-mode-map
+              (("C-c n i" . org-roam-insert))
+              (("C-c n I" . org-roam-insert-immediate))))
 
-;;evil mode ==============
+
+
+;;evil mode
 (use-package evil)
 (evil-mode 1)
 
-;;dashboard =========================
+;;dashboard
 (use-package dashboard
   :ensure t
   :config
