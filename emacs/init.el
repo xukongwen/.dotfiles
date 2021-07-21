@@ -15,6 +15,22 @@
 
 (setq graphic-only-plugins-setting nil)
 
+;; 簡單回到yes或no
+(fset 'yes-or-no-p 'y-or-n-p)
+
+;;自定義快捷鍵
+
+;; undo
+(global-set-key (kbd "C-/") 'undo)
+;; c-> 移動到其他窗口
+(global-set-key (kbd "C->") 'other-window)
+;; node find
+(global-set-key (kbd "s-f") 'org-roam-node-find)
+;; 切換buffer
+(global-set-key (kbd "s-b") 'switch-to-buffer)
+
+
+
 ;;字体
 
 (setq default-frame-alist '((font . "KKong3-15")))
@@ -179,18 +195,61 @@
 ;; org-roam设置
 (use-package org-roam
       :ensure t
-      :hook
-      (after-init . org-roam-mode)
       :custom
-      (org-roam-directory (file-truename "~/write/org-roam/"))
-      :bind (:map org-roam-mode-map
-              (("C-c n l" . org-roam)
-               ("C-c n f" . org-roam-find-file)
-               ("C-c n g" . org-roam-graph))
-              :map org-mode-map
-              (("C-c n i" . org-roam-insert))
-              (("C-c n I" . org-roam-insert-immediate))))
+      (org-roam-directory (file-truename "~/Dropbox/write/org-roam"))
+      :bind (("C-c n l" . org-roam-buffer-toggle)
+             ("C-c n f" . org-roam-node-find)
+             ("C-c n g" . org-roam-graph)
+             ("C-c n i" . org-roam-node-insert)
+             ("C-c n c" . org-roam-capture)
+             ;; Dailies
+             ("C-c n j" . org-roam-dailies-capture-today))
+      :config
+      (org-roam-setup)
+      ;; If using org-roam-protocol
+      (require 'org-roam-protocol))
 
+
+(setq org-roam-v2-ack t)
+
+(setq org-roam-mode-sections
+      (list #'org-roam-backlinks-section
+            #'org-roam-reflinks-section
+            ;; #'org-roam-unlinked-references-section
+            ))
+
+;; for org-roam-buffer-toggle
+;; Recommendation in the official manual
+(add-to-list 'display-buffer-alist
+               '(("\\*org-roam\\*"
+                  (display-buffer-in-direction)
+                  (direction . right)
+                  (window-width . 0.33)
+                  (window-height . fit-window-to-buffer))))
+
+;; 拖拽添加圖片
+(use-package org-download
+  :ensure t
+  :hook ((org-mode dired-mode) . org-download-enable)
+  :config
+  (defun +org-download-method (link)
+    (org-download--fullname (org-link-unescape link)))
+  (setq org-download-method '+org-download-method)
+
+  (setq org-download-annotate-function (lambda (_link) "")
+        org-download-method 'attach
+        org-download-screenshot-method "screencapture -i %s"))
+
+;; 這個是ivy裏面，把之前使用的命令顯示在最前面，非常實用
+(use-package counsel
+  :bind (("M-x" . counsel-M-x)
+         ("C-c i" . counsel-imenu)
+	 :map minibuffer-local-map
+         ("C-r" . 'counsel-minibuffer-history))
+  :config
+        (setq ivy-initial-inputs-alist nil)
+        (use-package smex)
+    )
 
 
 ;;evil mode
@@ -236,7 +295,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages '(writeroom-mode use-package projectile command-log-mode)))
+ '(package-selected-packages
+   '(smex org-roam arbitools writeroom-mode use-package projectile command-log-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
