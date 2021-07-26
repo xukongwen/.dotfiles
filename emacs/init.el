@@ -24,8 +24,11 @@
 (global-set-key (kbd "C-/") 'undo)
 ;; c-> 移動到其他窗口
 (global-set-key (kbd "C->") 'other-window)
-;; node find
+;; node find， 這個模式是編輯之後繼續
 (global-set-key (kbd "s-f") 'org-roam-node-find)
+;; node capture, 這個模式就是編輯完畢後就消失
+(global-set-key (kbd "s-c") 'org-roam-capture)
+
 ;; 切換buffer
 (global-set-key (kbd "s-b") 'switch-to-buffer)
 ;; 搜索當前buffer的所有文本，類似fzf
@@ -198,21 +201,22 @@ See also `special-words-count'."
 
 ;; 安裝awesome-tab
 ;; https://github.com/manateelazycat/awesome-tab.git
-(use-package awesome-tab
-	       :load-path "~/git/awesome-tab/"
-	       :config
-		   (awesome-tab-mode t))
+;;(use-package awesome-tab
+;;	       :load-path "~/git/awesome-tab/"
+;;	       :config
+;;		   (awesome-tab-mode t))
 ;; 在dashboard去掉多餘的tab
-(defun awesome-tab-hide-tab (x)
-  (let ((name (format "%s" x)))
-    (or
-     (string-prefix-p "*scratch" name)
-     (string-prefix-p "*Messages" name)
-     (string-prefix-p "*Compile-Log*" name)
-     (string-prefix-p "*lsp" name)
-     (and (string-prefix-p "magit" name)
-               (not (file-name-extension name)))
-     )))
+;;(defun awesome-tab-hide-tab (x)
+;;  (let ((name (format "%s" x)))
+;;    (or
+;;     (string-prefix-p "*scratch" name)
+;;     (string-prefix-p "*Messages" name)
+;;     (string-prefix-p "*Compile-Log*" name)
+;;     (string-prefix-p "*lsp" name)
+;;     (and (string-prefix-p "magit" name)
+;;               (not (file-name-extension name)))
+;;     )))
+
 ;;安裝ivy
 (use-package ivy
 			 	 :diminish
