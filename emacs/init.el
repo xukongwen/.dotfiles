@@ -1,11 +1,4 @@
-(setq inhibit-startup-message t)
-
-(scroll-bar-mode -1)        ; Disable visible scrollbar
-(tool-bar-mode -1)          ; Disable the toolbar
-(tooltip-mode -1)           ; Disable tooltips
-(set-fringe-mode 10)        ; Give some breathing room
-
-(menu-bar-mode -1)            ; Disable the menu bar
+;;空文的emacs設置
 
 (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
 (global-set-key [f8] 'neotree-toggle)
@@ -167,8 +160,8 @@ See also `special-words-count'."
 (setq use-package-always-ensure t)
 
 ;; 安裝和使用皮膚
-(use-package gruvbox-theme)
-(load-theme 'gruvbox t)
+;;(use-package gruvbox-theme)
+;;(load-theme 'gruvbox t)
 
 ;;中文rime輸入
 (use-package posframe)
@@ -354,40 +347,7 @@ See also `special-words-count'."
 (use-package evil)
 (evil-mode 1)
 
-;;dashboard
-(use-package dashboard
-  :ensure t
-  :config
-  (dashboard-setup-startup-hook))
 
-(setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
-
-; Set the title
-;;(setq dashboard-init-info "This is an init message!")
-(setq dashboard-banner-logo-title "None-Note")
-(setq dashboard-set-heading-icons t)
-(setq dashboard-set-file-icons t)
-;; Set the banner
-;;(setq dashboard-startup-banner "/home/k/Pictures/logo1.png")
-;; Content is not centered by default. To center, set
-(setq dashboard-center-content t)
-;; To disable shortcut "jump" indicators for each section, set
-(setq dashboard-show-shortcuts nil)
-
-(setq dashboard-items '((recents  . 5)
-                        (bookmarks . 5)))
-(setq dashboard-set-init-info nil)
-
-(setq dashboard-set-footer nil)
-(setq dashboard-footer-icon (all-the-icons-octicon "dashboard"
-                                                   :height 1.1
-                                                   :v-adjust -0.05
-                                                   :face 'font-lock-keyword-face))
-
-
-(add-hook 'dashboard-mode-hook '(lambda () (setq mode-line-format nil)))
-(add-hook 'dashboard-mode-hook '(lambda () (setq mode-line-format nil)
-                                           (doom-modeline-mode -1)))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -401,3 +361,81 @@ See also `special-words-count'."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+
+
+
+;;theme設置
+(add-to-list 'load-path "~/.emacs.d/nano/")
+
+;; Default layout (optional)
+(require 'nano-layout)
+
+;; Theming Command line options (this will cancel warning messages)
+(add-to-list 'command-switch-alist '("-dark"   . (lambda (args))))
+(add-to-list 'command-switch-alist '("-light"  . (lambda (args))))
+(add-to-list 'command-switch-alist '("-default"  . (lambda (args))))
+(add-to-list 'command-switch-alist '("-no-splash" . (lambda (args))))
+(add-to-list 'command-switch-alist '("-no-help" . (lambda (args))))
+(add-to-list 'command-switch-alist '("-compact" . (lambda (args))))
+
+
+(cond
+ ((member "-default" command-line-args) t)
+ ((member "-light" command-line-args) (require 'nano-theme-dark))
+ (t (require 'nano-theme-light)))
+
+
+;; Theme
+(require 'nano-faces)
+(nano-faces)
+
+(require 'nano-theme)
+(nano-theme)
+
+;; Nano default settings (optional)
+(require 'nano-defaults)
+
+;; Nano session saving (optional)
+(require 'nano-session)
+
+;; Nano header & mode lines (optional)
+(require 'nano-modeline)
+
+;; Nano key bindings modification (optional)
+(require 'nano-bindings)
+
+(require 'nano-writer)
+
+
+;; Compact layout (need to be loaded after nano-modeline)
+(when (member "-compact" command-line-args)
+  (require 'nano-compact))
+  
+;; Nano counsel configuration (optional)
+;; Needs "counsel" package to be installed (M-x: package-install)
+;; (require 'nano-counsel)
+
+;; Welcome message (optional)
+(let ((inhibit-message t))
+  (message "Welcome to 空文")
+  (message (format "初始化時間: %s" (emacs-init-time))))
+
+;; Splash (optional)
+(unless (member "-no-splash" command-line-args)
+  (require 'nano-splash))
+
+;; Help (optional)
+(unless (member "-no-help" command-line-args)
+  (require 'nano-help))
+
+(provide 'nano)
+
+(setq inhibit-startup-message t)
+
+(scroll-bar-mode -1)        ; Disable visible scrollbar
+(tool-bar-mode -1)          ; Disable the toolbar
+(tooltip-mode -1)           ; Disable tooltips
+(set-fringe-mode 10)        ; Give some breathing room
+
+(menu-bar-mode -1)            ; Disable the menu bar
