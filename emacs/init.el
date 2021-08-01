@@ -1,15 +1,15 @@
 ;;空文的emacs設置
 
 (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
-(global-set-key [f8] 'neotree-toggle)
-(global-set-key [f9] 'dashboard-refresh-buffer)
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
 
 (setq graphic-only-plugins-setting nil)
+;; 順滑鼠標
+(setq scroll-conservatively 101) ;; move minimum when cursor exits view, instead of recentering
+(setq mouse-wheel-scroll-amount '(1)) ;; mouse scroll moves 1 line at a time, instead of 5 lines
+(setq mouse-wheel-progressive-speed nil)
 
-;; 簡單回到yes或no
-(fset 'yes-or-no-p 'y-or-n-p)
 
 ;;自定義快捷鍵
 
@@ -123,10 +123,10 @@ See also `special-words-count'."
 
 ;;字体
 
-(setq default-frame-alist '((font . "KKong3-15")))
+;;(setq default-frame-alist '((font . "KKong3-17")))
 ;;先安裝字體，這個是谷歌的，免費開源的最完美字體
-(set-fontset-font t 'han "KKong3")
-;;(set-fontset-font t 'han "Source Han Serif SC Regular")
+;;(set-fontset-font t 'han "KKong3")
+(set-fontset-font t 'han "Source Han Serif SC Regular")
 ;;其他漢字語系的字體
 (set-fontset-font t 'kana "Noto Sans CJK JP Regular")
 (set-fontset-font t 'hangul "Noto Sans CJK KR Regular")
@@ -159,56 +159,23 @@ See also `special-words-count'."
 (require 'use-package)
 (setq use-package-always-ensure t)
 
-;; 安裝和使用皮膚
-;;(use-package gruvbox-theme)
-;;(load-theme 'gruvbox t)
-
-;;中文rime輸入
-(use-package posframe)
-(use-package rime)
-(setq rime-posframe-properties
-      (list :background-color "#333333"
-            :foreground-color "#dcdccc"
-            :font "KKong3-15"
-            :internal-border-width 5))
-
-(setq default-input-method "rime"
-      rime-show-candidate 'posframe)
 
 ;; 安裝projectile
 (use-package projectile)
 (projectile-mode +1)
-;;(define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
-(define-key projectile-mode-map (kbd "s-p") 'projectile--find-file)
+(define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+;;(define-key projectile-mode-map (kbd "s-p") 'projectile--find-file)
 
 ;; 安裝writeroom
-(use-package writeroom-mode)
-(global-writeroom-mode)
-(setq writeroom-mode 1)
+;;(use-package writeroom-mode)
+;;(global-writeroom-mode)
+;;(setq writeroom-mode 1)
 
 ;;安裝jk單行設置
 (use-package evil-better-visual-line
   :ensure t
   :config
   (evil-better-visual-line-on))
-
-;; 安裝awesome-tab
-;; https://github.com/manateelazycat/awesome-tab.git
-;;(use-package awesome-tab
-;;	       :load-path "~/git/awesome-tab/"
-;;	       :config
-;;		   (awesome-tab-mode t))
-;; 在dashboard去掉多餘的tab
-;;(defun awesome-tab-hide-tab (x)
-;;  (let ((name (format "%s" x)))
-;;    (or
-;;     (string-prefix-p "*scratch" name)
-;;     (string-prefix-p "*Messages" name)
-;;     (string-prefix-p "*Compile-Log*" name)
-;;     (string-prefix-p "*lsp" name)
-;;     (and (string-prefix-p "magit" name)
-;;               (not (file-name-extension name)))
-;;     )))
 
 ;;安裝ivy
 (use-package ivy
@@ -219,7 +186,7 @@ See also `special-words-count'."
 (use-package doom-modeline
 			 	 :ensure t
 			 	 :init (doom-modeline-mode 1)
-			 	 :custom ((doom-modeline-height 15)))
+			 	 :custom ((doom-modeline-height 17)))
 
 ;; orgmode 的一切設置
 
@@ -254,13 +221,18 @@ See also `special-words-count'."
   (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
   (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
 
+;(use-package smooth-scrolling)
+;(smooth-scrolling-mode 1)
+
 (use-package org
 		:hook (org-mode . efs/org-mode-setup)
 		:config
 		(setq org-ellipsis " ▾")
 		(efs/org-font-setup))
 
+;;此爲快速加入代碼塊
 (require 'org-tempo)
+
 (use-package org-bullets
   :after org
   :hook (org-mode . org-bullets-mode)
@@ -278,16 +250,12 @@ See also `special-words-count'."
 (setq org-return-follows-link t)
 ;; org 打開鏈接直接是本頁
 (add-to-list 'org-link-frame-setup '(file . find-file))
-;;(setq org-hide-emphasis-markers t)
-;;(use-package org-appear)
-;;(add-hook 'org-mode-hook 'org-appear-mode)
-;;(setq org-appear-autolinks t)
 
 ;; org-roam设置
 (use-package org-roam
       :ensure t
       :custom
-      (org-roam-directory (file-truename "~/Dropbox/write/org-roam"))
+      (org-roam-directory (file-truename "~/write/org-roam"))
       :bind (("C-c n l" . org-roam-buffer-toggle)
              ("C-c n f" . org-roam-node-find)
              ("C-c n g" . org-roam-graph)
@@ -354,7 +322,7 @@ See also `special-words-count'."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(smex org-roam arbitools writeroom-mode use-package projectile command-log-mode)))
+   '(smooth-scrolling smex org-roam arbitools writeroom-mode use-package projectile command-log-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -383,7 +351,7 @@ See also `special-words-count'."
 (cond
  ((member "-default" command-line-args) t)
  ((member "-light" command-line-args) (require 'nano-theme-dark))
- (t (require 'nano-theme-light)))
+ (t (require 'nano-theme-dark)))
 
 
 ;; Theme
@@ -411,7 +379,7 @@ See also `special-words-count'."
 ;; Compact layout (need to be loaded after nano-modeline)
 (when (member "-compact" command-line-args)
   (require 'nano-compact))
-  
+
 ;; Nano counsel configuration (optional)
 ;; Needs "counsel" package to be installed (M-x: package-install)
 ;; (require 'nano-counsel)
@@ -439,3 +407,22 @@ See also `special-words-count'."
 (set-fringe-mode 10)        ; Give some breathing room
 
 (menu-bar-mode -1)            ; Disable the menu bar
+
+;;中文rime輸入
+(use-package posframe)
+(use-package rime)
+;;这里把rime的设置文件指定好，fcitx5的目录就是在这里
+(setq rime-user-data-dir "~/.local/share/fcitx5/rime/")
+(setq rime-posframe-properties
+      (list :background-color "#333333"
+            :foreground-color "#dcdccc"
+            :font "KKong3-17"
+            :internal-border-width 5))
+
+(setq default-input-method "rime"
+      rime-show-candidate 'posframe)
+
+;; writeroom
+(use-package writeroom-mode)
+(global-writeroom-mode)
+(setq writeroom-mode 1)
