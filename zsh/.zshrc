@@ -171,7 +171,6 @@ source ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighti
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export FZF_DEFAULT_OPS="--extended"
 
-lolban none-os
 # auto jump
 [[ -s /home/k/.autojump/etc/profile.d/autojump.sh ]] && source /home/k/.autojump/etc/profile.d/autojump.sh
 
