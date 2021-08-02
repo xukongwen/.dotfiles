@@ -125,8 +125,8 @@ See also `special-words-count'."
 
 ;;(setq default-frame-alist '((font . "KKong3-17")))
 ;;先安裝字體，這個是谷歌的，免費開源的最完美字體
-;;(set-fontset-font t 'han "KKong3")
-(set-fontset-font t 'han "Source Han Serif SC Regular")
+(set-fontset-font t 'han "KKong3")
+;;(set-fontset-font t 'han "Source Han Serif SC Regular")
 ;;其他漢字語系的字體
 (set-fontset-font t 'kana "Noto Sans CJK JP Regular")
 (set-fontset-font t 'hangul "Noto Sans CJK KR Regular")
@@ -321,8 +321,10 @@ See also `special-words-count'."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   '("83e0376b5df8d6a3fbdfffb9fb0e8cf41a11799d9471293a810deb7586c131e6" default))
  '(package-selected-packages
-   '(smooth-scrolling smex org-roam arbitools writeroom-mode use-package projectile command-log-mode)))
+   '(mini-frame smooth-scrolling smex org-roam arbitools writeroom-mode use-package projectile command-log-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -375,7 +377,7 @@ See also `special-words-count'."
 
 (require 'nano-writer)
 
-
+;;(require 'nano-minibuffer)
 ;; Compact layout (need to be loaded after nano-modeline)
 (when (member "-compact" command-line-args)
   (require 'nano-compact))
@@ -426,3 +428,42 @@ See also `special-words-count'."
 (use-package writeroom-mode)
 (global-writeroom-mode)
 (setq writeroom-mode 1)
+
+(use-package mini-frame)
+
+;;隐藏org-roam的属性
+(defun org-cycle-hide-drawers (state)
+  "Re-hide all drawers after a visibility state change."
+  (when (and (derived-mode-p 'org-mode)
+             (not (memq state '(overview folded contents))))
+    (save-excursion
+      (let* ((globalp (memq state '(contents all)))
+             (beg (if globalp
+                    (point-min)
+                    (point)))
+             (end (if globalp
+                    (point-max)
+                    (if (eq state 'children)
+                      (save-excursion
+                        (outline-next-heading)
+                        (point))
+                      (org-end-of-subtree t)))))
+        (goto-char beg)
+        (while (re-search-forward org-drawer-regexp end t)
+          (save-excursion
+            (beginning-of-line 1)
+            (when (looking-at org-drawer-regexp)
+              (let* ((start (1- (match-beginning 0)))
+                     (limit
+                       (save-excursion
+                         (outline-next-heading)
+                           (point)))
+                     (msg (format
+                            (concat
+                              "org-cycle-hide-drawers:  "
+                              "`:END:`"
+                              " line missing at position %s")
+                            (1+ start))))
+                (if (re-search-forward "^[ \t]*:END:" limit t)
+                  (outline-flag-region start (point-at-eol) t)
+                  (user-error msg))))))))))
