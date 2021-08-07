@@ -324,7 +324,7 @@ See also `special-words-count'."
  '(custom-safe-themes
    '("83e0376b5df8d6a3fbdfffb9fb0e8cf41a11799d9471293a810deb7586c131e6" default))
  '(package-selected-packages
-   '(mini-frame smooth-scrolling smex org-roam arbitools writeroom-mode use-package projectile command-log-mode)))
+   '(fanyi mini-frame smooth-scrolling smex org-roam arbitools writeroom-mode use-package projectile command-log-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -429,41 +429,28 @@ See also `special-words-count'."
 (global-writeroom-mode)
 (setq writeroom-mode 1)
 
-(use-package mini-frame)
+;;设置code block颜色
+(require 'color)
+(set-face-attribute 'org-block nil :background
+                    (color-darken-name
+                     (face-attribute 'default :background) 3))
 
-;;隐藏org-roam的属性
-(defun org-cycle-hide-drawers (state)
-  "Re-hide all drawers after a visibility state change."
-  (when (and (derived-mode-p 'org-mode)
-             (not (memq state '(overview folded contents))))
-    (save-excursion
-      (let* ((globalp (memq state '(contents all)))
-             (beg (if globalp
-                    (point-min)
-                    (point)))
-             (end (if globalp
-                    (point-max)
-                    (if (eq state 'children)
-                      (save-excursion
-                        (outline-next-heading)
-                        (point))
-                      (org-end-of-subtree t)))))
-        (goto-char beg)
-        (while (re-search-forward org-drawer-regexp end t)
-          (save-excursion
-            (beginning-of-line 1)
-            (when (looking-at org-drawer-regexp)
-              (let* ((start (1- (match-beginning 0)))
-                     (limit
-                       (save-excursion
-                         (outline-next-heading)
-                           (point)))
-                     (msg (format
-                            (concat
-                              "org-cycle-hide-drawers:  "
-                              "`:END:`"
-                              " line missing at position %s")
-                            (1+ start))))
-                (if (re-search-forward "^[ \t]*:END:" limit t)
-                  (outline-flag-region start (point-at-eol) t)
-                  (user-error msg))))))))))
+(setq org-src-block-face '(("emacs-lisp" (:background "white"))))
+
+(use-package mini-frame)
+;;(use-package fanyi)
+(require 'sdcv)
+(setq sdcv-say-word-p t)               ;say word after translation
+
+(setq sdcv-dictionary-data-dir "/usr/share/stardict/dic") ;setup directory of stardict dictionary
+
+(setq sdcv-dictionary-simple-list    ;setup dictionary list for simple search
+      '("懒虫简明英汉词典"
+        "懒虫简明汉英词典"))
+
+(setq sdcv-dictionary-complete-list     ;setup dictionary list for complete search
+      '(
+        "懒虫简明英汉词典"
+        "懒虫简明汉英词典"
+        ))
+(require 'insert-translated-name)
