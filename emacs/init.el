@@ -413,8 +413,8 @@ See also `special-words-count'."
 ;;中文rime輸入
 (use-package posframe)
 (use-package rime)
-;;这里把rime的设置文件指定好，fcitx5的目录就是在这里
-(setq rime-user-data-dir "~/.local/share/fcitx5/rime/")
+;;这里把rime的设置文件指定好，fcitx5的目录就是在这里，简体就在这个目录里设置
+(setq rime-user-data-dir "~/git/rime-data/")
 (setq rime-posframe-properties
       (list :background-color "#333333"
             :foreground-color "#dcdccc"
@@ -423,6 +423,15 @@ See also `special-words-count'."
 
 (setq default-input-method "rime"
       rime-show-candidate 'posframe)
+
+(setq rime-disable-predicates
+      '(rime-predicate-evil-mode-p
+        rime-predicate-after-alphabet-char-p
+        rime-predicate-prog-in-code-p))
+
+
+;;; support shift-l, shift-r, control-l, control-r
+(setq rime-inline-ascii-trigger 'shift-l)
 
 ;; writeroom
 (use-package writeroom-mode)
@@ -438,11 +447,15 @@ See also `special-words-count'."
 (setq org-src-block-face '(("emacs-lisp" (:background "white"))))
 
 (use-package mini-frame)
-;;(use-package fanyi)
+;;一个比较详细的翻译功能
+(use-package fanyi)
+
+
+;;两个翻译功能
 (require 'sdcv)
 (setq sdcv-say-word-p t)               ;say word after translation
 
-(setq sdcv-dictionary-data-dir "/usr/share/stardict/dic") ;setup directory of stardict dictionary
+(setq sdcv-dictionary-data-dir "/usr/share/stardict/dic") ;把下载的字典放在这里
 
 (setq sdcv-dictionary-simple-list    ;setup dictionary list for simple search
       '("懒虫简明英汉词典"
@@ -453,4 +466,5 @@ See also `special-words-count'."
         "懒虫简明英汉词典"
         "懒虫简明汉英词典"
         ))
+;;把一句中文直接转化成英文
 (require 'insert-translated-name)
