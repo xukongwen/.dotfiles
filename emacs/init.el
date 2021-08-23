@@ -255,7 +255,7 @@ See also `special-words-count'."
 (use-package org-roam
       :ensure t
       :custom
-      (org-roam-directory (file-truename "~/write/org-roam"))
+      (org-roam-directory (file-truename "~/Dropbox/write/org-roam"))
       :bind (("C-c n l" . org-roam-buffer-toggle)
              ("C-c n f" . org-roam-node-find)
              ("C-c n g" . org-roam-graph)
@@ -414,7 +414,7 @@ See also `special-words-count'."
 (use-package posframe)
 (use-package rime)
 ;;这里把rime的设置文件指定好，fcitx5的目录就是在这里，简体就在这个目录里设置
-(setq rime-user-data-dir "~/git/rime-data/")
+(setq rime-user-data-dir "~/Dropbox/rime-data/")
 (setq rime-posframe-properties
       (list :background-color "#333333"
             :foreground-color "#dcdccc"
